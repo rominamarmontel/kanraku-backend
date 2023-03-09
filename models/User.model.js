@@ -26,6 +26,12 @@ const userSchema = new Schema(
       required: true,
       default: false,
     },
+    shippingAddress: {
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+      postalCode: { type: String, required: true },
+      country: { type: String, required: true },
+    },
   },
   {
     timestamps: true,
