@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const User = require('./../models/User.model')
+const isAuthenticated = require('../middlewares/isAuthenticated.js')
 
 /**
  * All of the routes here are prefixed by
@@ -8,11 +9,9 @@ const User = require('./../models/User.model')
 
 
   // GET user profile
-router.get('/:id/profile', async (req, res, next) => {
+router.get('/profile', isAuthenticated, async (req, res, next) => {
   try {
-    const { id } = req.params
-    const userProfile = await User.findById(id)
-    res.json(userProfile)
+    res.json({userProfile: req.user})
     // console.log(userProfile)
   } catch (error) {
     next (error)
@@ -20,12 +19,11 @@ router.get('/:id/profile', async (req, res, next) => {
 })
 
   // Edit profile
-router.patch('/:id/edit', async (req, res, next) => {
+router.patch('/edit', isAuthenticated, async (req, res, next) => {
   try {
-    const { id } = req.params
     const { username, email, password, shippingAddress } = req.body
     const UpdatedUser = await User.findByIdAndUpdate (
-      id,
+      req.user,
       { username, email, password, shippingAddress },
       { new : true }
     )
@@ -36,14 +34,13 @@ router.patch('/:id/edit', async (req, res, next) => {
 })
 
   // Delete profile
-  router.delete('/:id/delete', async (req, res, next) => {
+  router.delete('/delete', isAuthenticated, async (req, res, next) => {
     try {
-      await User.findByIdAndDelete(req.params.id)
+      await User.findByIdAndDelete(req.user)
       res.sendStatus(204)
     } catch (error) {
       next (error)
     }
   })
-
 
 module.exports = router
