@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const Order = require("../models/Order.model");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 /**
  * All of the routes here are prefixed by
  *    /api/orders
@@ -28,28 +30,25 @@ router.get("/:id", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const {
-      user,
-      orderItems,
+      // orderItems, Will come from the Cart/Form posting
       shippingAddress,
       paymentMethod,
-      purchaseDate,
-      taxPrice,
-      shippingPrice,
-      isDelivered,
-      deliveredAt,
     } = req.body;
 
-    const createdOrder = await Order.create({
-      user,
-      orderItems,
-      shippingAddress,
-      paymentMethod,
-      purchaseDate,
-      taxPrice,
-      shippingPrice,
-      isDelivered,
-      deliveredAt,
-    });
+    //Shipping address might come from the currently logged in user
+    const createdOrder = await Order.findByIdAndUpdate(
+      // replace by productId
+      "640a0988f691686df2564e23",
+      {
+        user: "640a04c0bd44c6fc1c1598f2", // real userId
+        // orderItems: {$push},
+        shippingAddress,
+        paymentMethod,
+        $push: { orderItems: { qty: 2, product: new ObjectId() } },
+        // need to update with the correct id},
+      },
+      { new: true, upsert: true }
+    );
     res.status(201).json(createdOrder);
   } catch (error) {
     next(error);
@@ -59,30 +58,14 @@ router.post("/", async (req, res, next) => {
 router.patch("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const {
-      user,
-      orderItems,
-      shippingAddress,
-      paymentMethod,
-      purchaseDate,
-      taxPrice,
-      shippingPrice,
-      isDelivered,
-      deliveredAt,
-    } = req.body;
+    const { orderItems, shippingAddress, paymentMethod } = req.body;
 
     const UpdatedOrder = await Order.findByIdAndUpdate(
       id,
       {
-        user,
         orderItems,
         shippingAddress,
         paymentMethod,
-        purchaseDate,
-        taxPrice,
-        shippingPrice,
-        isDelivered,
-        deliveredAt,
       },
       { new: true }
     );
@@ -95,7 +78,16 @@ router.patch("/:id", async (req, res, next) => {
 // Delete one order
 router.delete("/:id", async (req, res, next) => {
   try {
-    await Order.findByIdAndDelete(req.params.id);
+    await Order.findByIdAndDelete(
+      // replace by productId
+      "640a0d3b184cbd6d510513a3",
+      {
+        user: "640a04c0bd44c6fc1c1598f2", // real userId
+        // orderItems: {$push},
+        $pull: { orderItems: { qty: 2, product: "640a0d3b184cbd6d510513a2" } },
+        // need to update with the correct id},
+      }
+    );
     res.sendStatus(204);
   } catch (error) {
     next(error);
