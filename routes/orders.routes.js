@@ -7,9 +7,8 @@ const Order = require("../models/Order.model");
 // GET all the orders
 router.get("/", async (req, res, next) => {
   try {
-    const orders = await Order.find();
-    res.json(orders);
-    console.log(orders);
+    const orders = await Order.find({ user: req.user });
+    res.json({ orders });
   } catch (error) {
     next(error);
   }
@@ -19,11 +18,12 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const oneOrder = await Order.findById(req.params.id);
-    res.json({ oneOrder, message: "found order!" });
+    res.json({ oneOrder });
   } catch (error) {
     next(error);
   }
 });
+
 // Create an order
 router.post("/", async (req, res, next) => {
   try {
@@ -32,12 +32,9 @@ router.post("/", async (req, res, next) => {
       orderItems,
       shippingAddress,
       paymentMethod,
-      paymentResult,
+      purchaseDate,
       taxPrice,
       shippingPrice,
-      totalPrice,
-      isPaid,
-      paidAt,
       isDelivered,
       deliveredAt,
     } = req.body;
@@ -47,12 +44,9 @@ router.post("/", async (req, res, next) => {
       orderItems,
       shippingAddress,
       paymentMethod,
-      paymentResult,
+      purchaseDate,
       taxPrice,
       shippingPrice,
-      totalPrice,
-      isPaid,
-      paidAt,
       isDelivered,
       deliveredAt,
     });
@@ -70,12 +64,9 @@ router.patch("/:id", async (req, res, next) => {
       orderItems,
       shippingAddress,
       paymentMethod,
-      paymentResult,
+      purchaseDate,
       taxPrice,
       shippingPrice,
-      totalPrice,
-      isPaid,
-      paidAt,
       isDelivered,
       deliveredAt,
     } = req.body;
@@ -87,12 +78,9 @@ router.patch("/:id", async (req, res, next) => {
         orderItems,
         shippingAddress,
         paymentMethod,
-        paymentResult,
+        purchaseDate,
         taxPrice,
         shippingPrice,
-        totalPrice,
-        isPaid,
-        paidAt,
         isDelivered,
         deliveredAt,
       },
@@ -103,6 +91,7 @@ router.patch("/:id", async (req, res, next) => {
     next(error);
   }
 });
+
 // Delete one order
 router.delete("/:id", async (req, res, next) => {
   try {
@@ -112,4 +101,5 @@ router.delete("/:id", async (req, res, next) => {
     next(error);
   }
 });
+
 module.exports = router;

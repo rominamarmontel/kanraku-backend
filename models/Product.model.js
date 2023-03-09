@@ -1,11 +1,11 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model } = require("mongoose");
 
 const productSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
     name: {
       type: String,
@@ -41,8 +41,8 @@ const productSchema = new Schema(
   {
     timestamps: true,
   }
-)
+);
 
-const Product = model('Product', productSchema)
+const Product = model("Product", productSchema);
 
-module.exports = Product
+module.exports = Product;
