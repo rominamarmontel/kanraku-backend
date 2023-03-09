@@ -4,4 +4,6 @@ router.get("/", (req, res, next) => {
   res.json("All good in here");
 });
 
+router.use("/orders", require("./orders.routes"));
+
 module.exports = router;
