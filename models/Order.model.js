@@ -1,5 +1,4 @@
 const { Schema, model } = require("mongoose");
-const { phone } = require("phone");
 
 const orderSchema = new Schema(
   {
@@ -23,12 +22,12 @@ const orderSchema = new Schema(
       city: String,
       postalCode: String,
       country: String,
+      
       phone: {
         phoneNumber: String,
         countryIso2: String,
         countryCode: String,
       },
-      required: true,
     },
     paymentMethod: {
       type: String,
