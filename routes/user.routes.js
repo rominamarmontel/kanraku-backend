@@ -19,7 +19,7 @@ router.get('/profile', isAuthenticated, async (req, res, next) => {
 })
 
   // Edit profile
-router.patch('/edit', isAuthenticated, async (req, res, next) => {
+router.patch('/edit', isAuthenticated, /* IS ADMIN, */ async (req, res, next) => {
   try {
     const { username, email, password, shippingAddress } = req.body
     const UpdatedUser = await User.findByIdAndUpdate (
@@ -34,7 +34,7 @@ router.patch('/edit', isAuthenticated, async (req, res, next) => {
 })
 
   // Delete profile
-  router.delete('/delete', isAuthenticated, async (req, res, next) => {
+  router.delete('/delete', isAuthenticated, /* IS ADMIN, */ async (req, res, next) => {
     try {
       await User.findByIdAndDelete(req.user)
       res.sendStatus(204)
