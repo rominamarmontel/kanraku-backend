@@ -31,7 +31,7 @@ router.patch('/:id',  /* IS ADMIN, */ async (req, res, next) => {
   } catch (error) {
     next(error)
   }
-);
+});
 
 /* DELETE a Product */
 router.delete(
