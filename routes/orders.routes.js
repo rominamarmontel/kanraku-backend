@@ -1,28 +1,26 @@
 const router = require("express").Router();
 const Order = require("../models/Order.model");
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 const isAuthenticated = require("../middlewares/isAuthenticated");
+// const ObjectId = mongoose.Types.ObjectId;
 
 /**
  * All of the routes here are prefixed by
  *    /api/orders
  */
+
 // GET all the orders
-router.get("/", async (req, res, next) => {
+router.get("/", isAuthenticated, async (req, res, next) => {
   try {
-    const allOrders = await Order.findOne({ user: req.user.id });
-    if (allOrders && allOrders.items.length > 0) {
-      res.status(200).send(allOrders);
-    } else {
-      res.send(null);
-    }
+    const allOrders = await Order.find({ user: req.user.id });
+    res.json(allOrders);
   } catch (error) {
-    res.status(500).send("something went wrong");
+    next(error);
   }
 });
 
 // GET one order
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", isAuthenticated, async (req, res, next) => {
   try {
     const oneOrder = await Order.findById(req.params.id);
     res.json({ oneOrder });
@@ -31,7 +29,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// Old one: Create an order
+// Old one: Create an order with ObjectId
 // router.post("/", async (req, res, next) => {
 //   try {
 //     const {
@@ -105,39 +103,39 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// Delete orders to erase all the orders
-router.delete("/:id", async (req, res, next) => {
+//Update an order to withdraw some products from the array with patch
+router.patch("/:id", isAuthenticated, async (req, res, next) => {
   try {
-    await Order.findByIdAndDelete(req.params.id);
-    res.sendStatus(204);
+    const { id } = req.params;
+    // const { orderItems, shippingAddress, paymentMethod } = req.body;
+    const { productId } = req.body;
+    // const order = await Order.findOne({ _id: id, user: req.user._id })
+
+    const UpdatedOrder = await Order.findOneAndUpdate(
+      { _id: id, user: req.user._id },
+      {
+        $pull: {
+          orderItems: { product: productId },
+        },
+      },
+      { new: true }
+    );
+
+    console.log({ updated: UpdatedOrder.orderItems, productId });
+    res.status(202).json(UpdatedOrder);
   } catch (error) {
     next(error);
   }
 });
 
-// Update an order to withdraw some products from the array with patch
-// router.patch("/:id", async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     const {
-//       orderItems,
-//       shippingAddress,
-//       paymentMethod,
-//     } = req.body;
-
-//     const UpdatedOrder = await Order.findByIdAndUpdate(
-//       id,
-//       {
-//       orderItems,
-//       shippingAddress,
-//       paymentMethod,
-//       },
-//       { new: true }
-//     );
-//     res.status(202).json(UpdatedOrder);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+// Delete orders to erase all the orders
+router.delete("/:id", isAuthenticated, async (req, res, next) => {
+  try {
+    await Order.findOneAndDelete({ _id: req.params.id, user: req.user._id });
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
