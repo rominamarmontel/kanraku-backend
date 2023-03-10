@@ -1,5 +1,4 @@
 const { Schema, model } = require("mongoose");
-const { phone } = require("phone");
 
 const userSchema = new Schema(
   {
