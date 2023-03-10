@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Order = require("../models/Order.model");
 const mongoose = require("mongoose");
 const isAuthenticated = require("../middlewares/isAuthenticated");
-const ObjectId = mongoose.Types.ObjectId;
+
 /**
  * All of the routes here are prefixed by
  *    /api/orders
@@ -55,7 +55,6 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", isAuthenticated, async (req, res, next) => {
   const { orderItems, shippingAddress, paymentMethod } = req.body;
-  //chair object: 640b14c4ce767a42ca27e573
 
   try {
     // Check if there is an open order
@@ -101,7 +100,17 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// // Update an order
+// Delete orders to erase all the orders
+router.delete("/:id", async (req, res, next) => {
+  try {
+    await Order.findByIdAndDelete(req.params.id);
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Update an order to withdraw some products from the array with patch
 // router.patch("/:id", async (req, res, next) => {
 //   try {
 //     const { id } = req.params;
@@ -137,16 +146,5 @@ router.post("/", isAuthenticated, async (req, res, next) => {
 //     next(error);
 //   }
 // });
-
-// Delete one order = efface toutes les commandes
-// Update = pour retirer des produits dans l'array => patch
-router.delete("/:id", async (req, res, next) => {
-  try {
-    await Order.findByIdAndDelete(req.params.id);
-    res.sendStatus(204);
-  } catch (error) {
-    next(error);
-  }
-});
 
 module.exports = router;
