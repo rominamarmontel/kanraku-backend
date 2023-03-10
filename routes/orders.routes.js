@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Order = require("../models/Order.model");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
+
 /**
  * All of the routes here are prefixed by
  *    /api/orders
@@ -9,7 +10,7 @@ const ObjectId = mongoose.Types.ObjectId;
 // GET all the orders
 router.get("/", async (req, res, next) => {
   try {
-    const orders = await Order.find({ user: req.user });
+    const orders = await Order.find({ user: req.user }).populate();
     res.json({ orders });
   } catch (error) {
     next(error);

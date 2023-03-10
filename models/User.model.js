@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { phone } = require("phone");
 
 const userSchema = new Schema(
   {
@@ -27,10 +28,15 @@ const userSchema = new Schema(
       default: false,
     },
     shippingAddress: {
-      address: { type: String },
-      city: { type: String },
-      postalCode: { type: String },
-      country: { type: String },
+      address: String,
+      city: String,
+      postalCode: String,
+      country: String,
+      phone: {
+        phoneNumber: String,
+        countryIso2: String,
+        countryCode: String,
+      },
     },
   },
   {
