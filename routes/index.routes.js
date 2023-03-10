@@ -6,6 +6,9 @@ router.get("/", (req, res, next) => {
 
 router.use('/auth', require('./auth.routes'))
 
+/* ADMIN ROUTES */
+router.use('/dashboard', require('./dashboard.routes'))
+
 router.use('/user', require('./user.routes'))
 router.use("/orders", require("./orders.routes"))
 router.use('/products', require('./products.routes'))

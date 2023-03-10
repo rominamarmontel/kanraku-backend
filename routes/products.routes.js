@@ -23,40 +23,7 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-/* CREATE a Product */ /* IS ADMIN ONLY */
-router.post('/', async (req, res, next) => {
-  try {
-    const { user, name, image, brand, category, description, price, countInStock } = req.body
-    const createdProduct = await Product.create({ user, name, image, brand, category, description, price, countInStock })
-    res.status(201).json(createdProduct)
-  } catch (error) {
-    next (error)
-  }
-})
+/* CREATE, EDIT AND DELETE PRODUCTS ARE ONLY AVAILABLE BY ADMIN */
 
-/* EDIT a Product */ /* IS ADMIN ONLY */
-router.patch('/:id', async (req, res, next) => {
-  try {
-    const { id } = req.params
-    const { user, name, image, brand, category, description, price, countInStock } = req.body
-    const updatedProduct = await Product.findByIdAndUpdate(
-      id, 
-      { user, name, image, brand, category, description, price, countInStock }, 
-      { new: true })
-    res.status(202).json(updatedProduct)
-  } catch (error) {
-    next(error)
-  }
-})
-
-/* DELETE a Product */ /* IS ADMIN ONLY */
-router.delete('/:id', async (req, res, next) => {
-  try {
-    await Product.findByIdAndDelete(req.params.id)
-    res.sendStatus(204)
-  } catch (error) {
-    next (error)
-  }
-})
 
 module.exports = router
