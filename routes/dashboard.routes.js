@@ -3,14 +3,14 @@ const User = require('../models/User.model')
 const Product = require('../models/Product.model')
 const Order = require('../models/Order.model')
 
-/* All of the routes here are prefixed by /api/admin */
+/* All of the routes here are prefixed by /api/dashboard */
 
 // PRODUCTS
 /* CREATE a Product */ 
 router.post('/add-product',  /* IS ADMIN, */ async (req, res, next) => {
   try {
-    const { user, name, image, brand, category, description, price, countInStock } = req.body
-    const createdProduct = await Product.create({ user, name, image, brand, category, description, price, countInStock })
+    const { name, image, brand, category, description, price, countInStock } = req.body
+    const createdProduct = await Product.create({ name, image, brand, category, description, price, countInStock })
     res.status(201).json(createdProduct)
   } catch (error) {
     next (error)
@@ -21,10 +21,10 @@ router.post('/add-product',  /* IS ADMIN, */ async (req, res, next) => {
 router.patch('/:id',  /* IS ADMIN, */ async (req, res, next) => {
   try {
     const { id } = req.params
-    const { user, name, image, brand, category, description, price, countInStock } = req.body
+    const { name, image, brand, category, description, price, countInStock } = req.body
     const updatedProduct = await Product.findByIdAndUpdate(
       id, 
-      { user, name, image, brand, category, description, price, countInStock }, 
+      { name, image, brand, category, description, price, countInStock }, 
       { new: true })
     res.status(202).json(updatedProduct)
   } catch (error) {
