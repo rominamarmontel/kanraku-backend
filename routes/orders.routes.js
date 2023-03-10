@@ -10,10 +10,14 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 // GET all the orders
 router.get("/", async (req, res, next) => {
   try {
-    const orders = await Order.find({ user: req.user });
-    res.json({ orders });
+    const allOrders = await Order.findOne({ user: req.user.id });
+    if (allOrders && allOrders.items.length > 0) {
+      res.status(200).send(allOrders);
+    } else {
+      res.send(null);
+    }
   } catch (error) {
-    next(error);
+    res.status(500).send("something went wrong");
   }
 });
 
@@ -27,7 +31,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// Create an order
+// Old one: Create an order
 // router.post("/", async (req, res, next) => {
 //   try {
 //     const {
@@ -53,6 +57,7 @@ router.get("/:id", async (req, res, next) => {
 //   }
 // });
 
+// Create an order
 router.post("/", isAuthenticated, async (req, res, next) => {
   const { orderItems, shippingAddress, paymentMethod } = req.body;
 
@@ -115,29 +120,17 @@ router.delete("/:id", async (req, res, next) => {
 //   try {
 //     const { id } = req.params;
 //     const {
-//       user,
 //       orderItems,
 //       shippingAddress,
 //       paymentMethod,
-//       purchaseDate,
-//       taxPrice,
-//       shippingPrice,
-//       isDelivered,
-//       deliveredAt,
 //     } = req.body;
 
 //     const UpdatedOrder = await Order.findByIdAndUpdate(
 //       id,
 //       {
-//         user,
-//         orderItems,
-//         shippingAddress,
-//         paymentMethod,
-//         purchaseDate,
-//         taxPrice,
-//         shippingPrice,
-//         isDelivered,
-//         deliveredAt,
+//       orderItems,
+//       shippingAddress,
+//       paymentMethod,
 //       },
 //       { new: true }
 //     );
