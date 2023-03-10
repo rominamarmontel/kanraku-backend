@@ -10,48 +10,26 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 /* CREATE a Product */
 router.post("/add-product", async (req, res, next) => {
   try {
-    const { name, image, brand, category, description, price, countInStock } =
-      req.body;
-    const createdProduct = await Product.create({
-      name,
-      image,
-      brand,
-      category,
-      description,
-      price,
-      countInStock,
-    });
-    res.status(201).json(createdProduct);
+    const { name, image, brand, category, description, price, countInStock } = req.body
+    const createdProduct = await Product.create({ name, image, brand, category, description, price, countInStock })
+    res.status(201).json(createdProduct)
   } catch (error) {
     next(error);
   }
 });
 
 /* EDIT a Product */
-router.patch(
-  "/:id",
-  /* IS ADMIN, */ async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const { name, image, brand, category, description, price, countInStock } =
-        req.body;
-      const updatedProduct = await Product.findByIdAndUpdate(
-        id,
-        {
-          name,
-          image,
-          brand,
-          category,
-          description,
-          price,
-          countInStock,
-        },
-        { new: true }
-      );
-      res.status(202).json(updatedProduct);
-    } catch (error) {
-      next(error);
-    }
+router.patch('/:id',  /* IS ADMIN, */ async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { name, image, brand, category, description, price, countInStock } = req.body
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id, 
+      { name, image, brand, category, description, price, countInStock }, 
+      { new: true })
+    res.status(202).json(updatedProduct)
+  } catch (error) {
+    next(error)
   }
 );
 
