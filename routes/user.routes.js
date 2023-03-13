@@ -22,12 +22,13 @@ router.get('/profile', isAuthenticated, async (req, res, next) => {
 router.patch('/edit', isAuthenticated, /* IS ADMIN, */ async (req, res, next) => {
   try {
     const { username, email, password, shippingAddress } = req.body
+    // console.log("user", req.user)
     const UpdatedUser = await User.findByIdAndUpdate (
       req.user,
       { username, email, password, shippingAddress },
       { new : true }
     )
-    res.status(202).json(UpdatedUser)
+    res.status(200).json(UpdatedUser)
   } catch (error) {
     next (error)
   }
