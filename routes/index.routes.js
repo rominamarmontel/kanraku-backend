@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const fileUpload = require("../config/cloudinary.config");
 
 router.get("/", (req, res, next) => {
   res.json("All good in here");
