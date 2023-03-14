@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const Order = require("../models/Order.model");
-const Product = require("../models/Order.model");
 
 // Get a cart
 
@@ -30,7 +29,7 @@ router.get("/", isAuthenticated, async (req, res) => {
 
 /* CREATE a cart with product in it */
 router.post("/add", isAuthenticated, async (req, res) => {
-  const { orderItem } = req.body; // {product: ObjectId, qty: number}
+  const { orderItem } = req.body;
   try {
     // Check if there is a current cart
     let isCart = await Order.findOne({
