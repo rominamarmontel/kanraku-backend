@@ -1,16 +1,17 @@
 const router = require("express").Router();
 
 router.get("/", (req, res, next) => {
-  res.json("All good in here")
-})
+  res.json("All good in here");
+});
 
-router.use('/auth', require('./auth.routes'))
+router.use("/auth", require("./auth.routes"));
 
 /* ADMIN ROUTES */
-router.use('/dashboard', require('./dashboard.routes'))
+router.use("/dashboard", require("./dashboard.routes"));
 
-router.use('/user', require('./user.routes'))
-router.use("/orders", require("./orders.routes"))
-router.use('/products', require('./products.routes'))
+router.use("/user", require("./user.routes"));
+router.use("/orders", require("./orders.routes"));
+router.use("/products", require("./products.routes"));
+router.use("/cart", require("./cart.routes"));
 
 module.exports = router;

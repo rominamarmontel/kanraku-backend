@@ -22,7 +22,7 @@ const orderSchema = new Schema(
       city: String,
       postalCode: String,
       country: String,
-      
+
       phone: {
         phoneNumber: String,
         countryIso2: String,
@@ -31,7 +31,7 @@ const orderSchema = new Schema(
     },
     paymentMethod: {
       type: String,
-      required: true,
+      // required: true,
     },
     purchaseDate: {
       type: Date,
