@@ -1,13 +1,6 @@
 const router = require("express").Router();
 const Order = require("../models/Order.model");
-// const mongoose = require("mongoose");
 const isAuthenticated = require("../middlewares/isAuthenticated");
-// const ObjectId = mongoose.Types.ObjectId;
-
-/**
- * All of the routes here are prefixed by
- *    /api/orders
- */
 
 // GET all the orders
 router.get("/", isAuthenticated, async (req, res, next) => {
@@ -28,32 +21,6 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
     next(error);
   }
 });
-
-// Old one: Create an order with ObjectId
-// router.post("/", async (req, res, next) => {
-//   try {
-//     const {
-//       // orderItems, Will come from the Cart/Form posting
-//       shippingAddress,
-//       paymentMethod,
-//     } = req.body;
-
-//     //Shipping address might come from the currently logged in user
-
-//     const createdOrder = await Order.findByIdAndUpdate({
-//       user: new ObjectId(),
-//       orderItems: [
-//         { qty: 2, product: new ObjectId() },
-//         { qty: 3, product: new ObjectId() },
-//       ],
-//       shippingAddress,
-//       paymentMethod,
-//     });
-//     res.status(201).json(createdOrder);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 
 // Create an order
 router.post("/", isAuthenticated, async (req, res, next) => {
@@ -98,7 +65,7 @@ router.post("/", isAuthenticated, async (req, res, next) => {
       return res.status(201).send(newOrder);
     }
   } catch (error) {
-    console.log(error);
+    next(error);
     res.status(500).send("something went wrong");
   }
 });
@@ -107,9 +74,7 @@ router.post("/", isAuthenticated, async (req, res, next) => {
 router.patch("/:id", isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
-    // const { orderItems, shippingAddress, paymentMethod } = req.body;
     const { productId } = req.body;
-    // const order = await Order.findOne({ _id: id, user: req.user._id })
 
     const UpdatedOrder = await Order.findOneAndUpdate(
       { _id: id, user: req.user._id },
