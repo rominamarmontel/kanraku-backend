@@ -1,5 +1,6 @@
 const router = require("express").Router()
 const Product = require("./../models/Product.model")
+const fileUpload = require("../config/cloudinary-config");
 
 /* All of the routes here are prefixed by /api/products */
 
@@ -23,16 +24,22 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+router.post("/images", fileUpload.single('image'), (req, res, next) => {
+  // console.log(req.file.path);
+  res.json({ image: req.file.path });
+})
+
 /* CREATE a Product */
 router.post("/create", /* IS ADMIN, */ async (req, res, next) => {
   try {
+    console.log(req.body)
     const { name, image, brand, category, description, price, countInStock } = req.body
     const createdProduct = await Product.create({ name, image, brand, category, description, price, countInStock })
     res.status(201).json(createdProduct)
   } catch (error) {
     next(error);
   }
-});
+})
 
 /* EDIT a Product */
 router.patch('/:id',  /* IS ADMIN, */ async (req, res, next) => {
