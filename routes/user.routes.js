@@ -21,6 +21,7 @@ router.get('/profile', isAuthenticated, async (req, res, next) => {
   // Edit profile
 router.patch('/edit', isAuthenticated, /* IS ADMIN, */ async (req, res, next) => {
   try {
+
     const { username, email, password, shippingAddress } = req.body
     // console.log("user", req.user)
     const UpdatedUser = await User.findByIdAndUpdate (
