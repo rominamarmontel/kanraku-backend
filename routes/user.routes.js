@@ -2,10 +2,7 @@ const router = require('express').Router()
 const User = require('./../models/User.model')
 const isAuthenticated = require('../middlewares/isAuthenticated.js')
 
-/**
- * All of the routes here are prefixed by
- *    /api/user
- */
+/* All of the routes here are prefixed by /api/user */
 
 
   // GET user profile
