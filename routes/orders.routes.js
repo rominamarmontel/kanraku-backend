@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Order = require("../models/Order.model");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 
-// GET all the orders
+// Get all the orders
 router.get("/", isAuthenticated, async (req, res, next) => {
   try {
     const allOrders = await Order.find({ user: req.user.id });
@@ -12,7 +12,7 @@ router.get("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// GET one order
+// Get one order
 router.get("/:id", isAuthenticated, async (req, res, next) => {
   try {
     const oneOrder = await Order.findById(req.params.id);
@@ -93,7 +93,7 @@ router.patch("/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// Delete orders to erase all the orders
+// Delete order
 router.delete("/:id", isAuthenticated, async (req, res, next) => {
   try {
     await Order.findOneAndDelete({ _id: req.params.id, user: req.user._id });

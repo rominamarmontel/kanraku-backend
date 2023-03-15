@@ -3,7 +3,6 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 const Order = require("../models/Order.model");
 
 // Get a cart
-
 router.get("/", isAuthenticated, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -27,7 +26,7 @@ router.get("/", isAuthenticated, async (req, res) => {
   }
 });
 
-/* CREATE a cart with product in it */
+// Create a cart with product in it
 router.post("/add", isAuthenticated, async (req, res) => {
   const { orderItem } = req.body;
   try {
@@ -43,18 +42,18 @@ router.post("/add", isAuthenticated, async (req, res) => {
       });
     }
 
-    //   Check if product is already present in order
+    // Check if product is already present in order
     const foundIndex = isCart.orderItems.findIndex(
       (p) => p.product == orderItem.product
     );
 
     if (foundIndex > -1) {
-      // update quantity of already present product
+      // Update quantity if already present product
       let productItem = isCart.orderItems[foundIndex];
       productItem.qty += orderItem.qty;
       isCart.orderItems[foundIndex] = productItem;
     } else {
-      // add product and quantity
+      // Add product and quantity
       isCart.orderItems.push({
         product: orderItem.product,
         qty: orderItem.qty,
@@ -68,30 +67,48 @@ router.post("/add", isAuthenticated, async (req, res) => {
   }
 });
 
-// /* EDIT a cart */
-// router.patch('/:id',  /* IS ADMIN, */ async (req, res, next) => {
+// // Remove a product from the cart
+// router.delete("/remove/:productId", isAuthenticated, async (req, res) => {
+//   const productId = req.params.productId;
 //   try {
-//     const { id } = req.params
-//     const { name, image, brand, category, description, price, countInStock } = req.body
-//     const updatedProduct = await Product.findByIdAndUpdate(
-//       id,
-//       { name, image, brand, category, description, price, countInStock },
-//       { new: true })
-//     res.status(202).json(updatedProduct)
+//     // Find the current cart
+//     let cart = await Order.findOne({
+//       user: req.user.id,
+//       purchaseDate: { $exists: false },
+//     });
+
+//     // Check if product is present in order
+//     const foundIndex = cart.orderItems.findIndex((p) => p.product == productId);
+
+//     if (foundIndex > -1) {
+//       // Remove the product from the cart
+//       cart.orderItems.splice(foundIndex, 1);
+//       cart = await cart.save();
+//       return res.status(200).send(cart);
+//     } else {
+//       return res.status(404).send({ message: "Product not found in cart" });
+//     }
 //   } catch (error) {
-//     next(error)
+//     console.log(error);
+//     res.status(500).send("something went wrong");
 //   }
 // });
 
-// /* DELETE a cart */
-// router.delete("/:id", /* IS ADMIN, */ async (req, res, next) => {
-//     try {
-//       await Product.findByIdAndDelete(req.params.id);
-//       res.sendStatus(204);
-//     } catch (error) {
-//       next(error);
-//     }
+// // Delete the cart
+// router.delete("/delete", isAuthenticated, async (req, res) => {
+//   try {
+//     let cart = await Order.findOne({
+//       user: req.user.id,
+//       purchaseDate: { $exists: false },
+//     });
+//     // Remove it
+//     cart.orderItems = [];
+//     cart = await cart.save();
+//     return res.status(200).send(cart);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send("something went wrong");
 //   }
-// );
+// });
 
 module.exports = router;
