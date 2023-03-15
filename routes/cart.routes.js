@@ -1,77 +1,75 @@
-const router = require("express").Router();
-const isAuthenticated = require("../middlewares/isAuthenticated");
-const Order = require("../models/Order.model");
+const router = require('express').Router()
+const isAuthenticated = require('../middlewares/isAuthenticated')
+const Order = require('../models/Order.model')
 
 // Get a cart
-router.get("/", isAuthenticated, async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.id
     let cartItems = await Order.find({
       user: userId,
       purchaseDate: { $exists: false },
-    });
+    }).populate('orderItems.product')
     if (cartItems.length === 0) {
-      res.json({ message: "Your cart is empty" });
+      res.json({ message: 'Your cart is empty' })
     } else {
       const cart = cartItems[0].orderItems.map((item) => {
         return {
           qty: item.qty,
           product: item.product,
-        };
-      });
-      res.json(cart);
+        }
+      })
+      res.json(cart)
     }
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-});
+})
 
 // Create a cart with product in it
-router.post("/add", isAuthenticated, async (req, res) => {
+router.post('/add', isAuthenticated, async (req, res) => {
   try {
-  const { product, qty } = req.body;
-  const orderItem = {product, qty}
+    const { product, qty } = req.body
+    const orderItem = { product, qty }
 
-  // Check if there is a current cart
+    // Check if there is a current cart
     let isCart = await Order.findOne({
       user: req.user.id,
       purchaseDate: { $exists: false },
-    });
+    })
 
     // Create new cart if it doesn't exist
     if (!isCart) {
       isCart = await Order.create({
         user: req.user.id,
-      });
+      })
     }
 
     // Check if product is already present in order
-    const foundIndex = isCart.orderItems.findIndex(
-      (p) =>  p.product._id.equals(orderItem.product)
-      
-    );
+    const foundIndex = isCart.orderItems.findIndex((p) =>
+      p.product._id.equals(orderItem.product)
+    )
 
     if (foundIndex > -1) {
       // Update quantity if already present product
-      let productItem = isCart.orderItems[foundIndex];
-      productItem.qty += orderItem.qty;
+      let productItem = isCart.orderItems[foundIndex]
+      productItem.qty += orderItem.qty
     } else {
-      
       // Add product and quantity
       console.log(isCart.orderItems)
       isCart.orderItems.push({
         product: orderItem.product,
         qty: orderItem.qty,
-      });
+      })
     }
-    isCart = await isCart.save();
+    isCart = await isCart.save()
     console.log(isCart.orderItems)
-    return res.status(201).send(isCart);
+    return res.status(201).send(isCart)
   } catch (error) {
-    console.log(error);
-    res.status(500).send("something went wrong");
+    console.log(error)
+    res.status(500).send('something went wrong')
   }
-});
+})
 
 // // Remove a product from the cart
 // router.delete("/remove/:productId", isAuthenticated, async (req, res) => {
@@ -117,4 +115,4 @@ router.post("/add", isAuthenticated, async (req, res) => {
 //   }
 // });
 
-module.exports = router;
+module.exports = router
