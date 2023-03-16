@@ -21,8 +21,4 @@ app.use("/api", indexRoutes);
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
 
-// install stripe
-import { loadStripe } from "@stripe/stripe-js";
-const stripePromise = loadStripe(NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEYY);
-
 module.exports = app;
