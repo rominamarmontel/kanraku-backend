@@ -71,48 +71,55 @@ router.post('/add', isAuthenticated, async (req, res) => {
   }
 })
 
-// // Remove a product from the cart
-// router.delete("/remove/:productId", isAuthenticated, async (req, res) => {
-//   const productId = req.params.productId;
-//   try {
-//     // Find the current cart
-//     let cart = await Order.findOne({
-//       user: req.user.id,
-//       purchaseDate: { $exists: false },
-//     });
+// Remove a product from the cart
+router.delete('/remove/:productId', isAuthenticated, async (req, res) => {
+  try {
+    const productId = req.params.productId
+    const userId = req.user.id
 
-//     // Check if product is present in order
-//     const foundIndex = cart.orderItems.findIndex((p) => p.product == productId);
+    // Find the current cart
+    const cart = await Order.findOne({
+      user: userId,
+      purchaseDate: { $exists: false },
+    })
 
-//     if (foundIndex > -1) {
-//       // Remove the product from the cart
-//       cart.orderItems.splice(foundIndex, 1);
-//       cart = await cart.save();
-//       return res.status(200).send(cart);
-//     } else {
-//       return res.status(404).send({ message: "Product not found in cart" });
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("something went wrong");
-//   }
-// });
+    // Check if product is present in order
+    const foundIndex = cart.orderItems.findIndex(
+      (p) => p.product._id.equals(productId)
+    )
 
-// // Delete the cart
-// router.delete("/delete", isAuthenticated, async (req, res) => {
-//   try {
-//     let cart = await Order.findOne({
-//       user: req.user.id,
-//       purchaseDate: { $exists: false },
-//     });
-//     // Remove it
-//     cart.orderItems = [];
-//     cart = await cart.save();
-//     return res.status(200).send(cart);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("something went wrong");
-//   }
-// });
+    if (foundIndex > -1) {
+      // Remove the product from the cart
+      cart.orderItems.splice(foundIndex, 1)
+      await cart.save()
+      res.status(200).json(cart.orderItems)
+    } else {
+      res.status(404).send({ message: 'Product not found in cart' })
+    }
+  } catch (error) {
+    console.error(error)
+    res.status(500).send('Something went wrong')
+  }
+})
+
+// Remove all products from the cart
+router.delete('/remove-all', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const cart = await Order.findOneAndUpdate(
+      {
+        user: userId,
+        purchaseDate: { $exists: false },
+      },
+      { orderItems: [] },
+      { new: true }
+    ).populate('orderItems.product')
+
+    res.status(200).json(cart.orderItems)
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong')
+  }
+})
 
 module.exports = router
