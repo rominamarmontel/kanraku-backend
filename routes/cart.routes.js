@@ -56,14 +56,14 @@ router.post('/add', isAuthenticated, async (req, res) => {
       productItem.qty += orderItem.qty
     } else {
       // Add product and quantity
-      console.log(isCart.orderItems)
+      // console.log(isCart.orderItems)
       isCart.orderItems.push({
         product: orderItem.product,
         qty: orderItem.qty,
       })
     }
     isCart = await isCart.save()
-    console.log(isCart.orderItems)
+    // console.log(isCart.orderItems)
     return res.status(201).send(isCart)
   } catch (error) {
     console.log(error)

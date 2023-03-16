@@ -8,7 +8,7 @@ const fileUpload = require("../config/cloudinary-config");
 router.get("/", async (req, res, next) => {
   try {
     const products = await Product.find();
-    console.log(products);
+    // console.log(products);
     res.json(products);
   } catch (error) {
     next(error);
@@ -35,7 +35,7 @@ router.post(
   "/create",
   /* IS ADMIN, */ async (req, res, next) => {
     try {
-      console.log(req.body);
+      // console.log(req.body);
       const { name, image, brand, category, description, price, countInStock } =
         req.body;
       const createdProduct = await Product.create({
