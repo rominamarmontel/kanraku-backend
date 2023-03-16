@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const isAuthenticated = require('../middlewares/isAuthenticated')
 const Order = require('../models/Order.model')
+const Product = require('../models/Product.model')
 
 // Get a cart
 router.get('/', isAuthenticated, async (req, res) => {
@@ -47,24 +48,33 @@ router.post('/add', isAuthenticated, async (req, res) => {
 
     // Check if product is already present in cart
     const foundIndex = isCart.orderItems.findIndex((p) =>
-      p.product._id.equals(orderItem.product)
-    )
+    p.product._id.equals(orderItem.product)
+    );
 
     if (foundIndex > -1) {
-      // Update quantity if already present product
+    // Update quantity if already present product
       let productItem = isCart.orderItems[foundIndex]
+      const product = await Product.findById(productItem.product._id)
+
+    if (product.countInStock < productItem.qty + orderItem.qty) {
+      return res.status(400).send('Quantity exceeds available stock')
+    }
       productItem.qty += orderItem.qty
     } else {
-      // Add product and quantity
-      // console.log(isCart.orderItems)
+    // Add product and quantity
+      const product = await Product.findById(orderItem.product)
+        
+    if (product.countInStock < orderItem.qty) {
+      return res.status(400).send('Quantity exceeds available stock')
+    }
       isCart.orderItems.push({
         product: orderItem.product,
         qty: orderItem.qty,
-      })
+    });
     }
     isCart = await isCart.save()
-    // console.log(isCart.orderItems)
     return res.status(201).send(isCart)
+
   } catch (error) {
     console.log(error)
     res.status(500).send('something went wrong')
