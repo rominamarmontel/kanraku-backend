@@ -9,7 +9,6 @@ const isAuthenticated = require('../middlewares/isAuthenticated.js')
 router.get('/profile', isAuthenticated, async (req, res, next) => {
   try {
     res.json({userProfile: req.user})
-    // console.log(userProfile)
   } catch (error) {
     next (error)
   }
@@ -18,9 +17,7 @@ router.get('/profile', isAuthenticated, async (req, res, next) => {
   // Edit profile
 router.patch('/edit', isAuthenticated, /* IS ADMIN, */ async (req, res, next) => {
   try {
-
     const { username, email, password, shippingAddress } = req.body
-    // console.log("user", req.user)
     const UpdatedUser = await User.findByIdAndUpdate (
       req.user,
       { username, email, password, shippingAddress },

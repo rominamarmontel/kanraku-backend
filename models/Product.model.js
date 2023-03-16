@@ -8,7 +8,7 @@ const productSchema = new Schema(
     },
     image: {
       type: String,
-      // required: true,
+      required: true,
     },
     brand: {
       type: String,
