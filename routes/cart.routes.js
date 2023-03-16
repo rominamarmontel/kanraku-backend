@@ -45,7 +45,7 @@ router.post('/add', isAuthenticated, async (req, res) => {
       })
     }
 
-    // Check if product is already present in order
+    // Check if product is already present in cart
     const foundIndex = isCart.orderItems.findIndex((p) =>
       p.product._id.equals(orderItem.product)
     )
