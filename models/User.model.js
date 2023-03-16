@@ -31,11 +31,6 @@ const userSchema = new Schema(
       city: String,
       postalCode: String,
       country: String,
-      phone: {
-        phoneNumber: String,
-        countryIso2: String,
-        countryCode: String,
-      },
     },
   },
   {

@@ -8,7 +8,6 @@ const fileUpload = require("../config/cloudinary-config");
 router.get("/", async (req, res, next) => {
   try {
     const products = await Product.find();
-    // console.log(products);
     res.json(products);
   } catch (error) {
     next(error);
@@ -25,28 +24,14 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/images", fileUpload.single("image"), (req, res, next) => {
-  // console.log(req.file.path);
-  res.json({ image: req.file.path });
-});
-
 /* CREATE a Product */
-router.post(
-  "/create",
-  /* IS ADMIN, */ async (req, res, next) => {
+router.post("/create",/* IS ADMIN, */fileUpload.single("image"), async (req, res, next) => {
     try {
-      // console.log(req.body);
-      const { name, image, brand, category, description, price, countInStock } =
-        req.body;
-      const createdProduct = await Product.create({
-        name,
-        image,
-        brand,
-        category,
-        description,
-        price,
-        countInStock,
-      });
+      const productToCreate = {...req.body};
+      if (req.file) {
+        productToCreate.image = req.file.path
+      }
+      const createdProduct = await Product.create(productToCreate);
       res.status(201).json(createdProduct);
     } catch (error) {
       next(error);
@@ -55,16 +40,19 @@ router.post(
 );
 
 /* EDIT a Product */
-router.patch(
-  "/:id",
-  /* IS ADMIN, */ async (req, res, next) => {
+router.patch("/:id",/* IS ADMIN, */fileUpload.single("image"),  async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { name, image, brand, category, description, price, countInStock } =
-        req.body;
+      const productToUpdate =
+        {...req.body};
+
+        if (req.file) {
+          productToUpdate.image = req.file.path
+        }
+  
       const updatedProduct = await Product.findByIdAndUpdate(
         id,
-        { name, image, brand, category, description, price, countInStock },
+        productToUpdate,
         { new: true }
       );
       res.status(202).json(updatedProduct);
@@ -75,9 +63,7 @@ router.patch(
 );
 
 /* DELETE a Product */
-router.delete(
-  "/:id",
-  /* IS ADMIN, */ async (req, res, next) => {
+router.delete("/:id", /* IS ADMIN, */ async (req, res, next) => {
     try {
       await Product.findByIdAndDelete(req.params.id);
       res.sendStatus(204);

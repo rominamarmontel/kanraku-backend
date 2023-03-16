@@ -25,7 +25,6 @@ const orderSchema = new Schema(
     },
     paymentMethod: {
       type: String,
-      // required: true,
     },
     purchaseDate: {
       type: Date,

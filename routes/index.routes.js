@@ -12,8 +12,8 @@ router.use("/products", require("./products.routes"));
 router.use("/cart", require("./cart.routes"));
 
 // error handling middleware
-router.use((err, req, res, next) => {
-  console.error(err.stack);
+router.use((error, req, res, next) => {
+  console.error(error.stack);
   res.status(500).send("Something broke!");
 });
 
