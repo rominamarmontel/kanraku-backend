@@ -22,12 +22,6 @@ const orderSchema = new Schema(
       city: String,
       postalCode: String,
       country: String,
-
-      phone: {
-        phoneNumber: String,
-        countryIso2: String,
-        countryCode: String,
-      },
     },
     paymentMethod: {
       type: String,
@@ -59,4 +53,4 @@ const orderSchema = new Schema(
 
 const Order = model("Order", orderSchema);
 
-module.exports = Order
+module.exports = Order;
