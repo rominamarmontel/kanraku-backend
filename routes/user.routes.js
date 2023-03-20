@@ -4,39 +4,49 @@ const isAuthenticated = require('../middlewares/isAuthenticated.js')
 
 /* All of the routes here are prefixed by /api/user */
 
-
-  // GET user profile
+// GET user profile
 router.get('/profile', isAuthenticated, async (req, res, next) => {
   try {
-    res.json({userProfile: req.user})
+    res.json({ userProfile: req.user })
   } catch (error) {
-    next (error)
+    next(error)
   }
 })
 
-  // Edit profile
-router.patch('/edit', isAuthenticated, /* IS ADMIN, */ async (req, res, next) => {
+// Edit profile
+router.patch('/edit', isAuthenticated, async (req, res, next) => {
   try {
     const { username, email, password, shippingAddress } = req.body
-    const UpdatedUser = await User.findByIdAndUpdate (
-      req.user,
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
       { username, email, password, shippingAddress },
-      { new : true }
+      { new: true }
     )
-    res.status(200).json(UpdatedUser)
+    res.status(200).json(updatedUser)
   } catch (error) {
-    next (error)
+    next(error)
   }
 })
 
-  // Delete profile
-  router.delete('/delete', isAuthenticated, /* IS ADMIN, */ async (req, res, next) => {
-    try {
-      await User.findByIdAndDelete(req.user)
-      res.sendStatus(204)
-    } catch (error) {
-      next (error)
+// DELETE user profile with confirmed password
+router.delete('/delete', isAuthenticated, async (req, res, next) => {
+  try {
+    const { password } = req.headers
+    const user = await User.findById(req.user.id)
+    if (!user) {
+      return res.status(401).send({ error: 'Unauthorized' })
     }
-  })
+    const isPasswordValid = await user.comparePassword(password)
+    if (!isPasswordValid) {
+      return res.status(401).send({ error: 'Incorrect password' })
+    }
+    await User.findByIdAndDelete(req.user.id)
+    res.sendStatus(204)
+  } catch (error) {
+    next(error)
+  }
+})
+
 
 module.exports = router
+
